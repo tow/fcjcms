@@ -113,7 +113,8 @@
     {% endif %}
 </head>
 <body>
-    <h1>{{ feincms_page.title }}</h1>
+  <div about="/page/{{ feincms_page.pk }}/">
+    <h1 property="title">{{ feincms_page.title }}</h1>
 
     <div id="navigation" class="clearfix">
         {% feincms_nav feincms_page level=1 as toplevel %}
@@ -123,10 +124,15 @@
     </div>
 
     <div id="wrapper">
-        <div id="main" about="/page/{{ feincms_page.pk }}/">
-            <h2 property="title">Main content</h2>
-            <div property="content">
-               {% block content %}{% feincms_render_region feincms_page "main" request %}{% endblock %}
+        <div id="main">
+            <div>
+                {% block content %}
+                   {% for content in feincms_page.content.main %}
+                   <div property="content-main-{{ forloop.counter }}">
+                         {% feincms_render_content content request %}
+                      </div>
+                   {% endfor %}
+                {% endblock %}
             </div>
         </div>
 
@@ -141,12 +147,20 @@
                     No subpages
                 {% endfor %}
 
-                {% block sidebar %}{% feincms_render_region feincms_page "sidebar" request %}{% endblock %}
+                {% block sidebar %}
+                   {% for content in feincms_page.content.sidebar %}
+                   <div property="content-sidebar-{{ forloop.counter }}">
+                         {% feincms_render_content content request %}
+                      </div>
+                   {% endfor %}
+                {% endblock %}
             </div>
         </div>
 
         {% feincms_frontend_editing feincms_page request %}
 
         <span id="something">{% get_fragment request "something" %}</span>
-    </body>
+    </div>
+  </div>
+</body>
 </html>
