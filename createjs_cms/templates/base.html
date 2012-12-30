@@ -139,9 +139,7 @@
             <div>
                 {% block content %}
                    {% for content in feincms_page.content.main %}
-                   <div property="content-main-{{ forloop.counter }}">
-                         {% feincms_render_content content request %}
-                      </div>
+                   <div property="content-main-{{ forloop.counter }}">{% feincms_render_content content request %}</div>
                    {% endfor %}
                 {% endblock %}
             </div>
@@ -160,9 +158,7 @@
 
                 {% block sidebar %}
                    {% for content in feincms_page.content.sidebar %}
-                   <div property="content-sidebar-{{ forloop.counter }}">
-                         {% feincms_render_content content request %}
-                      </div>
+                   <div property="content-sidebar-{{ forloop.counter }}">{% feincms_render_content content request %}</div>
                    {% endfor %}
                 {% endblock %}
             </div>
