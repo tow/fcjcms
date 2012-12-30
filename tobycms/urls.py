@@ -7,16 +7,14 @@ admin.autodiscover()
 from feincms.views.cbv.views import Handler
 handler = Handler.as_view()
 
+from createjs_cms.views import PageUpdateView
+
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'tobycms.views.home', name='home'),
-    # url(r'^tobycms/', include('tobycms.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+)
+
+urlpatterns += patterns('',
+   url(r'^createjs_cms/$', PageUpdateView.as_view(), name='page_update_view'),
 )
 
 urlpatterns += patterns('',
