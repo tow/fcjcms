@@ -1,4 +1,4 @@
-# Django settings for tobycms project.
+# Django settings for fcjcms project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -98,10 +98,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'tobycms.urls'
+ROOT_URLCONF = 'fcjcms.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'tobycms.wsgi.application'
+WSGI_APPLICATION = 'fcjcms.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
