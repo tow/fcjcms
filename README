@@ -1,0 +1,5 @@
+This is a django CMS, built to use a CreateJS (http://www.createjs.org) frontend for inline editing, together with a FeinCMS backend.
+
+This is written with Django-1.5 / Python 3.
+
+It depends on forked versions of both feincms and mptt (incorporating changes to make both libraries work under django 1.5 / python 3)
