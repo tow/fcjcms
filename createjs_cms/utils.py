@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import collections, json, re
 
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 
 
 class JSONLD(object):
@@ -51,19 +52,50 @@ class JSONLD(object):
     def register_model(cls, model):
         cls.registered_content_types.add(ContentType.objects.get_for_model(model))
 
-    def attributes_from_rdfa(self):
+    @transaction.commit_on_success()
+    def update_model(self, save=False):
+        attributes = RDFAttributes.from_rdfa(self.rdfa)
+        content = attributes.pop('content')
+        for section, l in content.items():
+            s = getattr(self.object.content, section)
+            assert len(l) == len(s)
+            # should have done earlier checks to prevent us getting this far
+            for (i, c) in enumerate(l):
+                cm = s[i] # one contentmodel instance
+                cm.text = c
+                if save:
+                    cm.save()
+        for k, v in attributes.items():
+            setattr(self.object, k, v)
+        if save:
+            self.object.save()
+
+    def save(self):
+        self.update_model(save=True)
+
+
+class RDFAttributes(dict):
+    @classmethod
+    def from_rdfa(cls, rdfa):
         attributes = { "content": collections.defaultdict(dict) }
-        for (k, v) in self.rdfa.items():
-            m = self.rdfa_re.match(k)
+        for (k, v) in rdfa.items():
+            m = JSONLD.rdfa_re.match(k)
             if not m:
                 raise ValueError("Could not understand rdfa: {0}".format(k))
             property = m.groupdict()["property"]
             if property.startswith('content'):
-                m = self.content_re.match(property)
+                m = JSONLD.content_re.match(property)
                 if not m:
                     raise ValueError("Could not understand content id: {0}".format(m))
                 md = m.groupdict()
-                attributes['content'][md['section']][md['oid']] = v
+                attributes['content'][md['section']][int(md['oid'])] = v
             else:
                 attributes[property] = v
-        return attributes
+        # sanity check content section, plus turn dicts into lists
+        for (section, d) in attributes['content'].items():
+            if sorted(d.keys()) != list(range(len(d))):
+                print(sorted(d.keys()))
+                print(list(range(len(d))))
+                raise ValueError("Some content missing from rdfa content: {0}".format(section))
+            attributes['content'][section] = [v for (k, v) in sorted(d.items())]
+        return cls(**attributes)

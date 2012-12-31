@@ -14,7 +14,5 @@ class PageUpdateView(View):
             json_ld = JSONLD.from_json(request.body.decode('utf8'))
         except ValueError:
             return HttpResponseBadRequest()
-        object = json_ld.object
-        print(json_ld, json_ld.object, json_ld.rdfa)
-        print(json_ld.attributes_from_rdfa())
+        json_ld.save()
         return HttpResponse(status=204)
